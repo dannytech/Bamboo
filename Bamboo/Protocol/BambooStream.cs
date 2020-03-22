@@ -32,7 +32,6 @@ namespace Bamboo.Protocol
             // Read bytes into a buffer which we will return directly
             byte[] bytes = new byte[length];
             Stream.Read(bytes, 0, length);
-            Console.WriteLine(BitConverter.ToString(bytes));
 
             // All types except VarInt, VarLong, and VarChar are big-endian, so on little-endian systems we need to flip the buffers
             //if (BitConverter.IsLittleEndian && forceBE)

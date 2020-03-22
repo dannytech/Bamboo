@@ -1,3 +1,5 @@
+using Bamboo.Protocol.Handshake;
+
 namespace Bamboo.Protocol
 {
     class BambooPacketFactory

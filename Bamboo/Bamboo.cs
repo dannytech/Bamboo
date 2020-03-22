@@ -6,17 +6,14 @@ namespace Bamboo
     class Program
     {
         private static BambooServer Server;
-        public IConfiguration Configuration;
 
         public Program()
         {
             // Load server configuration
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("./bamboo.json");
-            Configuration = configurationBuilder.Build();
+            BambooSettings.LoadConfiguration();
 
             // Start the server
-            Server = new BambooServer(Configuration["server:ip"], ushort.Parse(Configuration["server:port"]));
+            Server = new BambooServer(BambooSettings.Configuration["server:ip"], ushort.Parse(BambooSettings.Configuration["server:port"]));
             Server.Start();
 
             // TODO Start the API
