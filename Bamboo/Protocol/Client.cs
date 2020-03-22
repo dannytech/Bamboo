@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bamboo.Protocol
 {
-    public enum BambooClientState
+    public enum ClientState
     {
         Handshaking = 0,
         Status = 1,
@@ -28,7 +28,7 @@ namespace Bamboo.Protocol
         private readonly TcpClient _Client;
         private readonly DataStream _Stream;
         public readonly List<ClientboundPacket> ClientboundPackets;
-        public BambooClientState ClientState;
+        public ClientState ClientState;
         public CompressionState Compression;
         public Player Player;
 
@@ -40,7 +40,7 @@ namespace Bamboo.Protocol
             ClientboundPackets = new List<ClientboundPacket>();
             
             // Set initial client state
-            ClientState = BambooClientState.Handshaking;
+            ClientState = ClientState.Handshaking;
             Compression = CompressionState.Disabled;
 
             new Task(ServerboundTasks).Start(); // Listen for requests

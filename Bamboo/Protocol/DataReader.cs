@@ -4,18 +4,23 @@ using System.Text;
 
 namespace Bamboo.Protocol
 {
+    interface IReadable
+    {
+        public byte[] Read(int length);
+    }
+
     class DataReader
     {
-        private readonly IReadable Readable;
+        private readonly IReadable _Readable;
 
         public DataReader(IReadable readable)
         {
-            Readable = readable;
+            _Readable = readable;
         }
 
         public byte[] Read(int length)
         {
-            return Readable.Read(length);
+            return _Readable.Read(length);
         }
 
         public byte ReadByte()

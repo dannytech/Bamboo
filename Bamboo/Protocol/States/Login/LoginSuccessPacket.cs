@@ -15,10 +15,10 @@ namespace Bamboo.Protocol.States.Login
             DataWriter writer = new DataWriter(buffer);
 
             // Write the player metadata
-            writer.WriteVarChar(Client.Player.UUID.ToString("D"));
-            writer.WriteVarChar(Client.Player.Username);
+            writer.WriteVarChar(_Client.Player.UUID.ToString("D"));
+            writer.WriteVarChar(_Client.Player.Username);
 
-            Client.ClientState = BambooClientState.Play;
+            _Client.ClientState = ClientState.Play;
         }
     }
 }

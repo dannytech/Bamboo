@@ -14,7 +14,7 @@ namespace Bamboo.Protocol.States.Login
 
             writer.WriteVarInt(Settings.CompressionThreshold);
 
-            Client.Compression = CompressionState.Enabling;
+            _Client.Compression = CompressionState.Enabling;
         }
     }
 }

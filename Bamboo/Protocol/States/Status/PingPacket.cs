@@ -13,7 +13,7 @@
             // The payload for verification
             long payload = reader.ReadInt64();
 
-            Client.ClientboundPackets.Add(new PongPacket(Client, payload));
+            _Client.ClientboundPackets.Add(new PongPacket(_Client, payload));
         }
     }
 }

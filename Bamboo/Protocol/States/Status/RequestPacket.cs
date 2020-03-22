@@ -8,7 +8,7 @@
 
         public override void Parse(IReadable buffer)
         {
-            Client.ClientboundPackets.Add(new ResponsePacket(Client));
+            _Client.ClientboundPackets.Add(new ResponsePacket(_Client));
         }
     }
 }

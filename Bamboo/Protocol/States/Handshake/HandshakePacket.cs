@@ -20,9 +20,9 @@
             reader.ReadUInt16();
 
             // Lastly, the type of request (status or login)
-            BambooClientState nextState = (BambooClientState)reader.ReadVarInt();
+            ClientState nextState = (ClientState)reader.ReadVarInt();
 
-            Client.ClientState = nextState;
+            _Client.ClientState = nextState;
         }
     }
 }

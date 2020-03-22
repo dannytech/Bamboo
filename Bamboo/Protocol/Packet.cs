@@ -6,11 +6,11 @@ namespace Bamboo.Protocol
 {
     class BambooPacketFactory
     {
-        private readonly Client Client;
+        private readonly Client _Client;
 
         public BambooPacketFactory(Client client)
         {
-            Client = client;
+            _Client = client;
         }
 
         public void Parse(IReadable buffer)
@@ -22,32 +22,32 @@ namespace Bamboo.Protocol
 
             // Route the packet by its ID
             ServerboundPacket packet = null;
-            switch (Client.ClientState)
+            switch (_Client.ClientState)
             {
-                case BambooClientState.Handshaking:
+                case ClientState.Handshaking:
                     switch(packetId)
                     {
                         case 0x00:
-                            packet = new HandshakePacket(Client);
+                            packet = new HandshakePacket(_Client);
                             break;
                     }
                     break;
-                case BambooClientState.Status:
+                case ClientState.Status:
                     switch (packetId)
                     {
                         case 0x00:
-                            packet = new RequestPacket(Client);
+                            packet = new RequestPacket(_Client);
                             break;
                         case 0x01:
-                            packet = new PingPacket(Client);
+                            packet = new PingPacket(_Client);
                             break;
                     }
                     break;
-                case BambooClientState.Login:
+                case ClientState.Login:
                     switch(packetId)
                     {
                         case 0x00:
-                            packet = new LoginStartPacket(Client);
+                            packet = new LoginStartPacket(_Client);
                             break;
                     }
                     break;
@@ -60,11 +60,11 @@ namespace Bamboo.Protocol
     abstract class ClientboundPacket
     {
         public abstract int PacketID { get; }
-        protected Client Client;
+        protected Client _Client;
 
         public ClientboundPacket(Client client)
         {
-            Client = client;
+            _Client = client;
         }
 
         public abstract void Write(IWritable buffer);
@@ -73,11 +73,11 @@ namespace Bamboo.Protocol
     abstract class ServerboundPacket
     {
         public abstract int PacketID { get; }
-        protected Client Client;
+        protected Client _Client;
 
         protected ServerboundPacket(Client client)
         {
-            Client = client;
+            _Client = client;
         }
 
         public abstract void Parse(IReadable buffer);

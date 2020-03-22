@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Bamboo.Server;
+﻿using Bamboo.Server;
 
 namespace Bamboo
 {
     class Program
     {
-        private static Server.Server Server;
+        private static Server.Server _Server;
 
         public Program()
         {
@@ -16,8 +15,8 @@ namespace Bamboo
             Helpers.Initialize();
 
             // Start the server
-            Server = new Server.Server();
-            Server.Start();
+            _Server = new Server.Server();
+            _Server.Start();
 
             // TODO Start the API
         }

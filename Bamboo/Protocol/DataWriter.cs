@@ -3,6 +3,11 @@ using System.Text;
 
 namespace Bamboo.Protocol
 {
+    interface IWritable
+    {
+        public void Write(byte[] bytes);
+    }
+
     class DataWriter
     {
         private readonly IWritable Writable;

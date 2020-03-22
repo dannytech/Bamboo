@@ -18,17 +18,17 @@ namespace Bamboo.Protocol.States.Login
 
             // TODO BambooHelpers.HttpClient.GetAsync($"https://api.mojang.com/users/profiles/minecraft/{username}");
             Guid uuid = Guid.NewGuid();
-            Client.Player = new Player(username, uuid);
+            _Client.Player = new Player(username, uuid);
 
             if (Settings.Configuration["online"] == "true")
             {
-                Client.ClientboundPackets.Add(new EncryptionRequestPacket(Client));
+                _Client.ClientboundPackets.Add(new EncryptionRequestPacket(_Client));
             }
             else
             {
-                Client.ClientboundPackets.Add(new SetCompressionPacket(Client));
-                Client.ClientboundPackets.Add(new DisconnectPacket(Client));
-                Client.ClientboundPackets.Add(new LoginSuccessPacket(Client));
+                _Client.ClientboundPackets.Add(new SetCompressionPacket(_Client));
+                _Client.ClientboundPackets.Add(new DisconnectPacket(_Client));
+                _Client.ClientboundPackets.Add(new LoginSuccessPacket(_Client));
             }
         }
     }
