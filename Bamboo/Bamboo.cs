@@ -13,7 +13,7 @@ namespace Bamboo
             BambooSettings.LoadConfiguration();
 
             // Start the server
-            Server = new BambooServer(BambooSettings.Configuration["server:ip"], ushort.Parse(BambooSettings.Configuration["server:port"]));
+            Server = new BambooServer();
             Server.Start();
 
             // TODO Start the API

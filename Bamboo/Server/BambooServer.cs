@@ -14,10 +14,10 @@ namespace Bamboo.Server
         private uint CurrentID = 0;
         private readonly Dictionary<uint, BambooClient> Clients = new Dictionary<uint, BambooClient>();
 
-        public BambooServer(string ip, ushort port)
+        public BambooServer()
         {
-            ListenIP = IPAddress.Parse(ip);
-            ListenPort = port;
+            ListenIP = IPAddress.Parse(BambooSettings.Configuration["server:ip"]);
+            ListenPort = ushort.Parse(BambooSettings.Configuration["server:port"]);
 
             Server = new TcpListener(ListenIP, ListenPort);
         }

@@ -4,9 +4,12 @@ namespace Bamboo.Server
 {
     class BambooSettings
     {
+        // Bamboo constants
         internal static int ProtocolVersion = 578;
         internal static string SemanticVersion = "1.15.2";
         internal static string ServerName = "Bamboo";
+
+        // Instance settings
         public static IConfiguration Configuration;
 
         internal static void LoadConfiguration()

@@ -1,4 +1,6 @@
-using Bamboo.Protocol.Handshake;
+using Bamboo.Protocol.States.Handshake;
+using Bamboo.Protocol.States.Status;
+using Bamboo.Protocol.States.Login;
 
 namespace Bamboo.Protocol
 {
@@ -38,6 +40,14 @@ namespace Bamboo.Protocol
                             break;
                         case 0x01:
                             packet = new PingPacket(Client);
+                            break;
+                    }
+                    break;
+                case BambooClientState.Login:
+                    switch(packetId)
+                    {
+                        case 0x00:
+                            packet = new LoginStartPacket(Client);
                             break;
                     }
                     break;
