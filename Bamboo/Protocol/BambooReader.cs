@@ -28,10 +28,11 @@ namespace Bamboo.Protocol
             return ReadByte() != 0x00;
         }
 
-        public int ReadVarInt()
+        public int ReadVarInt() => ReadVarInt(out int _);
+        public int ReadVarInt(out int size)
         {
             int result = 0;
-            int size = 0;
+            size = 0;
             int b;
 
             do
@@ -52,10 +53,11 @@ namespace Bamboo.Protocol
             return result;
         }
 
-        public long ReadVarLong()
+        public long ReadVarLong() => ReadVarLong(out int _);
+        public long ReadVarLong(out int size)
         {
             long result = 0;
-            int size = 0;
+            size = 0;
             int b;
 
             do

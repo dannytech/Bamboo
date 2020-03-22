@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Bamboo.Game;
+using Bamboo.Server;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -12,12 +16,21 @@ namespace Bamboo.Protocol
         Play = 3
     }
 
+    public enum CompressionState
+    {
+        Disabled,
+        Enabling,
+        Enabled
+    }
+
     class BambooClient
     {
         private readonly TcpClient Client;
         private readonly BambooStream Stream;
         public readonly List<ClientboundPacket> ClientboundPackets;
         public BambooClientState ClientState;
+        public CompressionState Compression;
+        public BambooPlayer Player;
 
         public BambooClient(TcpClient client)
         {
@@ -28,6 +41,7 @@ namespace Bamboo.Protocol
             
             // Set initial client state
             ClientState = BambooClientState.Handshaking;
+            Compression = CompressionState.Disabled;
 
             new Task(ServerboundTasks).Start(); // Listen for requests
             new Task(ClientboundTasks).Start(); // Send queued responses
@@ -57,19 +71,56 @@ namespace Bamboo.Protocol
                     // Write the buffer to the clientbound stream along with relevant metadata
                     byte[] bytes = buffer.Buffer.ToArray();
 
-                    // Build a secondary buffer
+                    // Compress the packet
+                    if (Compression == CompressionState.Enabled)
+                    {
+                        int uncompressedSize = bytes.Length;
+
+                        if (uncompressedSize > BambooSettings.CompressionThreshold)
+                        {
+                            MemoryStream uncompressed = new MemoryStream(bytes);
+                            MemoryStream compressed = new MemoryStream();
+                            DeflateStream zlib = new DeflateStream(compressed, CompressionMode.Compress);
+
+                            uncompressed.CopyTo(zlib); // Compress the bytes into the compressed stream
+
+                            bytes = compressed.ToArray();
+                        }
+                        else
+                        {
+                            uncompressedSize = 0; // Compression did not meet the threshold and was ignored
+                        }
+
+                        buffer = new BambooBuffer();
+                        writer = new BambooWriter(buffer);
+
+                        writer.WriteVarInt(uncompressedSize); // Write the size of the uncompressed data
+                        writer.Write(bytes);
+
+                        bytes = buffer.Buffer.ToArray();
+                    }
+
+                    // Build a buffer for the packet size and the payload
                     buffer = new BambooBuffer();
                     writer = new BambooWriter(buffer);
-                    
+
                     // Prepend the packet size
                     writer.WriteVarInt(bytes.Length);
                     writer.Write(bytes);
 
                     // Send the bytes to the client
-                    writer = new BambooWriter(Stream);
-                    writer.Write(buffer.Buffer.ToArray());
+                    bytes = buffer.Buffer.ToArray();
 
-                    ClientboundPackets.RemoveAt(0);
+                    writer = new BambooWriter(Stream);
+                    writer.Write(bytes);
+
+                    ClientboundPackets.RemoveAt(0); // Remove the packet from the queue
+
+                    // Enable compression after sending the Set Compression packet
+                    if (Compression == CompressionState.Enabling && packet is States.Login.SetCompressionPacket)
+                    {
+                        Compression = CompressionState.Enabled;
+                    }
                 }
             }
         }
@@ -91,10 +142,38 @@ namespace Bamboo.Protocol
                     break;
                 }
 
-                // Read an entire packet
-                byte[] bytes = reader.Read(packetLength);
+                byte[] bytes;
 
-                // Build a buffer and reader
+                // Decompress the packet, if necessary
+                if (Compression == CompressionState.Enabled)
+                {
+                    // Check that the packet met the compression threshold
+                    if (reader.ReadVarInt(out int dataLengthSize) > 0)
+                    {
+                        // Read the compressed packet
+                        byte[] compressedBytes = reader.Read(packetLength - dataLengthSize);
+
+                        // Decompress the packet
+                        MemoryStream compressed = new MemoryStream(compressedBytes);
+                        MemoryStream uncompressed = new MemoryStream();
+                        DeflateStream zlib = new DeflateStream(uncompressed, CompressionMode.Decompress);
+
+                        compressed.CopyTo(zlib);
+
+                        bytes = uncompressed.ToArray();
+                    }
+                    else
+                    {
+                        // Read the uncompressed packet
+                        bytes = reader.Read(packetLength - dataLengthSize);
+                    }
+                }
+                else
+                {
+                    bytes = reader.Read(packetLength);
+                }
+
+                // Build a buffer
                 BambooBuffer readBuffer = new BambooBuffer(bytes);
 
                 // Parse the packet and allow it to add clientbound packets
