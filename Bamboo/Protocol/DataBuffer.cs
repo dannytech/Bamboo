@@ -2,18 +2,18 @@
 
 namespace Bamboo.Protocol
 {
-    class BambooBuffer : IReadable, IWritable
+    class DataBuffer : IReadable, IWritable
     {
         private int Cursor = 0;
         public readonly List<byte> Buffer;
         public int Length = 0;
 
-        public BambooBuffer()
+        public DataBuffer()
         {
             Buffer = new List<byte>();
         }
 
-        public BambooBuffer(byte[] bytes)
+        public DataBuffer(byte[] bytes)
         {
             Buffer = new List<byte>(bytes);
             Length = Buffer.Count;

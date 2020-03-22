@@ -2,7 +2,7 @@
 
 namespace Bamboo.Server
 {
-    class BambooSettings
+    class Settings
     {
         // Bamboo constants
         internal static readonly int ProtocolVersion = 578;

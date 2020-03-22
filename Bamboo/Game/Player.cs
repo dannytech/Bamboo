@@ -3,12 +3,12 @@ using System;
 
 namespace Bamboo.Game
 {
-    class BambooPlayer
+    class Player
     {
         public string Username;
         public Guid UUID;
 
-        public BambooPlayer(string username, Guid uuid)
+        public Player(string username, Guid uuid)
         {
             Username = username;
             UUID = uuid;

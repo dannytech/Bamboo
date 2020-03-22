@@ -23,20 +23,20 @@ namespace Bamboo.Protocol
         Enabled
     }
 
-    class BambooClient
+    class Client
     {
-        private readonly TcpClient Client;
-        private readonly BambooStream Stream;
+        private readonly TcpClient _Client;
+        private readonly DataStream _Stream;
         public readonly List<ClientboundPacket> ClientboundPackets;
         public BambooClientState ClientState;
         public CompressionState Compression;
-        public BambooPlayer Player;
+        public Player Player;
 
-        public BambooClient(TcpClient client)
+        public Client(TcpClient client)
         {
             // Set up connection helpers
-            Client = client;
-            Stream = new BambooStream(Client.GetStream());
+            _Client = client;
+            _Stream = new DataStream(_Client.GetStream());
             ClientboundPackets = new List<ClientboundPacket>();
             
             // Set initial client state
@@ -49,18 +49,18 @@ namespace Bamboo.Protocol
 
         public void Stop()
         {
-            Client.Close();
+            _Client.Close();
         }
 
         private void ClientboundTasks()
         {
-            while (Client.Connected)
+            while (_Client.Connected)
             {
                 if (ClientboundPackets.Count > 0)
                 {
                     // Build a temporary write buffer
-                    BambooBuffer buffer = new BambooBuffer();
-                    BambooWriter writer = new BambooWriter(buffer);
+                    DataBuffer buffer = new DataBuffer();
+                    DataWriter writer = new DataWriter(buffer);
 
                     // Grab the first packet
                     ClientboundPacket packet = ClientboundPackets[0];
@@ -76,7 +76,7 @@ namespace Bamboo.Protocol
                     {
                         int uncompressedSize = bytes.Length;
 
-                        if (uncompressedSize > BambooSettings.CompressionThreshold)
+                        if (uncompressedSize > Settings.CompressionThreshold)
                         {
                             MemoryStream uncompressed = new MemoryStream(bytes);
                             MemoryStream compressed = new MemoryStream();
@@ -92,8 +92,8 @@ namespace Bamboo.Protocol
                             uncompressedSize = 0; // Compression did not meet the threshold and was ignored
                         }
 
-                        buffer = new BambooBuffer();
-                        writer = new BambooWriter(buffer);
+                        buffer = new DataBuffer();
+                        writer = new DataWriter(buffer);
 
                         writer.WriteVarInt(uncompressedSize); // Write the size of the uncompressed data
                         writer.Write(bytes);
@@ -102,8 +102,8 @@ namespace Bamboo.Protocol
                     }
 
                     // Build a buffer for the packet size and the payload
-                    buffer = new BambooBuffer();
-                    writer = new BambooWriter(buffer);
+                    buffer = new DataBuffer();
+                    writer = new DataWriter(buffer);
 
                     // Prepend the packet size
                     writer.WriteVarInt(bytes.Length);
@@ -112,7 +112,7 @@ namespace Bamboo.Protocol
                     // Send the bytes to the client
                     bytes = buffer.Buffer.ToArray();
 
-                    writer = new BambooWriter(Stream);
+                    writer = new DataWriter(_Stream);
                     writer.Write(bytes);
 
                     ClientboundPackets.RemoveAt(0); // Remove the packet from the queue
@@ -130,9 +130,9 @@ namespace Bamboo.Protocol
         {
             BambooPacketFactory factory = new BambooPacketFactory(this);
 
-            while (Client.Connected)
+            while (_Client.Connected)
             {
-                BambooReader reader = new BambooReader(Stream);
+                DataReader reader = new DataReader(_Stream);
 
                 // Read the packet length
                 int packetLength = reader.ReadVarInt();
@@ -176,13 +176,13 @@ namespace Bamboo.Protocol
                 }
 
                 // Build a buffer
-                BambooBuffer readBuffer = new BambooBuffer(bytes);
+                DataBuffer readBuffer = new DataBuffer(bytes);
 
                 // Parse the packet and allow it to add clientbound packets
                 factory.Parse(readBuffer);
             }
 
-            Client.Close();
+            _Client.Close();
         }
     }
 }

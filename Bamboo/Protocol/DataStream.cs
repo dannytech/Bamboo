@@ -16,11 +16,11 @@ namespace Bamboo.Protocol
         public void Write(byte[] bytes);
     }
 
-    class BambooStream : IReadable, IWritable
+    class DataStream : IReadable, IWritable
     {
         private readonly Stream Stream;
 
-        public BambooStream(Stream stream)
+        public DataStream(Stream stream)
         {
             Stream = stream;
         }

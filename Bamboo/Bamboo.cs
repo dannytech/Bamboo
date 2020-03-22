@@ -5,15 +5,18 @@ namespace Bamboo
 {
     class Program
     {
-        private static BambooServer Server;
+        private static Server.Server Server;
 
         public Program()
         {
             // Load server configuration
-            BambooSettings.LoadConfiguration();
+            Settings.LoadConfiguration();
+
+            // Initialize helpers
+            Helpers.Initialize();
 
             // Start the server
-            Server = new BambooServer();
+            Server = new Server.Server();
             Server.Start();
 
             // TODO Start the API

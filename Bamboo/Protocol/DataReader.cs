@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Bamboo.Protocol
 {
-    class BambooReader
+    class DataReader
     {
         private readonly IReadable Readable;
 
-        public BambooReader(IReadable readable)
+        public DataReader(IReadable readable)
         {
             Readable = readable;
         }

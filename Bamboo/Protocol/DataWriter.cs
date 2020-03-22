@@ -3,11 +3,11 @@ using System.Text;
 
 namespace Bamboo.Protocol
 {
-    class BambooWriter
+    class DataWriter
     {
         private readonly IWritable Writable;
 
-        public BambooWriter(IWritable writable)
+        public DataWriter(IWritable writable)
         {
             Writable = writable;
         }

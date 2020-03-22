@@ -6,16 +6,16 @@ namespace Bamboo.Protocol
 {
     class BambooPacketFactory
     {
-        private readonly BambooClient Client;
+        private readonly Client Client;
 
-        public BambooPacketFactory(BambooClient client)
+        public BambooPacketFactory(Client client)
         {
             Client = client;
         }
 
         public void Parse(IReadable buffer)
         {
-            BambooReader reader = new BambooReader(buffer);
+            DataReader reader = new DataReader(buffer);
 
             // We can assume uncompressed for the time being
             int packetId = reader.ReadVarInt();
@@ -60,9 +60,9 @@ namespace Bamboo.Protocol
     abstract class ClientboundPacket
     {
         public abstract int PacketID { get; }
-        protected BambooClient Client;
+        protected Client Client;
 
-        public ClientboundPacket(BambooClient client)
+        public ClientboundPacket(Client client)
         {
             Client = client;
         }
@@ -73,9 +73,9 @@ namespace Bamboo.Protocol
     abstract class ServerboundPacket
     {
         public abstract int PacketID { get; }
-        protected BambooClient Client;
+        protected Client Client;
 
-        protected ServerboundPacket(BambooClient client)
+        protected ServerboundPacket(Client client)
         {
             Client = client;
         }

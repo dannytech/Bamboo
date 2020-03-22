@@ -4,11 +4,11 @@
     {
         public override int PacketID { get => 0x00; }
 
-        public HandshakePacket(BambooClient client) : base(client) { }
+        public HandshakePacket(Client client) : base(client) { }
 
         public override void Parse(IReadable buffer)
         {
-            BambooReader reader = new BambooReader(buffer);
+            DataReader reader = new DataReader(buffer);
 
             // First, the protocol version
             reader.ReadVarInt();
