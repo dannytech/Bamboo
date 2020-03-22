@@ -60,16 +60,15 @@ namespace Bamboo.Protocol
                 {
                     // Build a temporary write buffer
                     DataBuffer buffer = new DataBuffer();
-                    DataWriter writer = new DataWriter(buffer);
 
                     // Grab the first packet
                     ClientboundPacket packet = ClientboundPackets[0];
 
-                    writer.WriteVarInt(packet.PacketID); // Write the packet ID
+                    buffer.Writer.WriteVarInt(packet.PacketID); // Write the packet ID
                     packet.Write(buffer); // Fill the temporary buffer with the response packet
 
                     // Write the buffer to the clientbound stream along with relevant metadata
-                    byte[] bytes = buffer.Buffer.ToArray();
+                    byte[] bytes = buffer.Reader.ReadAll();
 
                     // Compress the packet
                     if (Compression == CompressionState.Enabled)
@@ -93,27 +92,24 @@ namespace Bamboo.Protocol
                         }
 
                         buffer = new DataBuffer();
-                        writer = new DataWriter(buffer);
 
-                        writer.WriteVarInt(uncompressedSize); // Write the size of the uncompressed data
-                        writer.Write(bytes);
+                        buffer.Writer.WriteVarInt(uncompressedSize); // Write the size of the uncompressed data
+                        buffer.Writer.Write(bytes);
 
-                        bytes = buffer.Buffer.ToArray();
+                        bytes = buffer.Reader.ReadAll();
                     }
 
                     // Build a buffer for the packet size and the payload
                     buffer = new DataBuffer();
-                    writer = new DataWriter(buffer);
 
                     // Prepend the packet size
-                    writer.WriteVarInt(bytes.Length);
-                    writer.Write(bytes);
+                    buffer.Writer.WriteVarInt(bytes.Length);
+                    buffer.Writer.Write(bytes);
 
                     // Send the bytes to the client
-                    bytes = buffer.Buffer.ToArray();
+                    bytes = buffer.Reader.ReadAll();
 
-                    writer = new DataWriter(_Stream);
-                    writer.Write(bytes);
+                    _Stream.Writer.Write(bytes);
 
                     ClientboundPackets.RemoveAt(0); // Remove the packet from the queue
 
@@ -132,10 +128,8 @@ namespace Bamboo.Protocol
 
             while (_Client.Connected)
             {
-                DataReader reader = new DataReader(_Stream);
-
                 // Read the packet length
-                int packetLength = reader.ReadVarInt();
+                int packetLength = _Stream.Reader.ReadVarInt();
 
                 // A packet length of zero means the connection has ended on the client (a FIN packet has been sent)
                 if (packetLength == 0)
@@ -149,10 +143,10 @@ namespace Bamboo.Protocol
                 if (Compression == CompressionState.Enabled)
                 {
                     // Check that the packet met the compression threshold
-                    if (reader.ReadVarInt(out int dataLengthSize) > 0)
+                    if (_Stream.Reader.ReadVarInt(out int dataLengthSize) > 0)
                     {
                         // Read the compressed packet
-                        byte[] compressedBytes = reader.Read(packetLength - dataLengthSize);
+                        byte[] compressedBytes = _Stream.Reader.Read(packetLength - dataLengthSize);
 
                         // Decompress the packet
                         MemoryStream compressed = new MemoryStream(compressedBytes);
@@ -167,12 +161,12 @@ namespace Bamboo.Protocol
                     else
                     {
                         // Read the uncompressed packet
-                        bytes = reader.Read(packetLength - dataLengthSize);
+                        bytes = _Stream.Reader.Read(packetLength - dataLengthSize);
                     }
                 }
                 else
                 {
-                    bytes = reader.Read(packetLength);
+                    bytes = _Stream.Reader.Read(packetLength);
                 }
 
                 // Build a buffer

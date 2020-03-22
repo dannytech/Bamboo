@@ -5,6 +5,8 @@ namespace Bamboo.Protocol
 {
     interface IWritable
     {
+        public int Position { get; set; }
+        public DataWriter Writer { get; }
         public void Write(byte[] bytes);
     }
 

@@ -15,10 +15,8 @@ namespace Bamboo.Protocol
 
         public void Parse(IReadable buffer)
         {
-            DataReader reader = new DataReader(buffer);
-
             // We can assume uncompressed for the time being
-            int packetId = reader.ReadVarInt();
+            int packetId = buffer.Reader.ReadVarInt();
 
             // Route the packet by its ID
             ServerboundPacket packet = null;

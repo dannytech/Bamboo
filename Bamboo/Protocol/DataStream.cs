@@ -1,8 +1,4 @@
-using System;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 
 namespace Bamboo.Protocol
 {
@@ -10,11 +6,29 @@ namespace Bamboo.Protocol
     {
         private readonly Stream _Stream;
 
+        public int Length {
+            get => (int)_Stream.Length;
+        }
+        public int Position
+        {
+            get => (int)_Stream.Position;
+            set => _Stream.Position = value;
+        }
+        public DataReader Reader { get; }
+        public DataWriter Writer { get; }
+
         public DataStream(Stream stream)
         {
             _Stream = stream;
+
+            Reader = new DataReader(this);
+            Writer = new DataWriter(this);
         }
 
+        public byte[] Read()
+        {
+            return Read((int)(_Stream.Length - _Stream.Position));
+        }
         public byte[] Read(int length)
         {
             // Read bytes into a buffer which we will return directly

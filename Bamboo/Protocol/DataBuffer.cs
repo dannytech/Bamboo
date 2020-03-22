@@ -4,35 +4,40 @@ namespace Bamboo.Protocol
 {
     class DataBuffer : IReadable, IWritable
     {
-        private int _Cursor = 0;
-        public readonly List<byte> Buffer;
-        public int Length = 0;
+        private readonly List<byte> _Buffer;
 
-        public DataBuffer()
-        {
-            Buffer = new List<byte>();
-        }
+        public int Length { get => _Buffer.Count; }
+        public int Position { get; set; }
+        public DataReader Reader { get; }
+        public DataWriter Writer { get; }
 
+        public DataBuffer() : this(new byte[] { }) { }
         public DataBuffer(byte[] bytes)
         {
-            Buffer = new List<byte>(bytes);
-            Length = Buffer.Count;
+            _Buffer = new List<byte>(bytes);
+
+            Position = 0;
+            Reader = new DataReader(this);
+            Writer = new DataWriter(this);
         }
 
+        public byte[] Read()
+        {
+            return Read(Length - Position);
+        }
         public byte[] Read(int length)
         {
             // Write the data into a new buffer
-            byte[] bytes = Buffer.GetRange(_Cursor, length).ToArray();
-            _Cursor += length;
+            byte[] bytes = _Buffer.GetRange(Position, length).ToArray();
+            Position += length;
 
             return bytes;
         }
 
         public void Write(byte[] bytes)
         {
-            Buffer.InsertRange(_Cursor, bytes);
-            _Cursor += bytes.Length;
-            Length += bytes.Length;
+            _Buffer.InsertRange(Position, bytes);
+            Position += bytes.Length;
         }
     }
 }

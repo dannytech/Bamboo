@@ -6,6 +6,10 @@ namespace Bamboo.Protocol
 {
     interface IReadable
     {
+        public DataReader Reader { get; }
+        public int Length { get; }
+        public int Position { get; set; }
+        public byte[] Read();
         public byte[] Read(int length);
     }
 
@@ -18,9 +22,19 @@ namespace Bamboo.Protocol
             _Readable = readable;
         }
 
+        public byte[] Read()
+        {
+            return _Readable.Read();
+        }
         public byte[] Read(int length)
         {
             return _Readable.Read(length);
+        }
+
+        public byte[] ReadAll()
+        {
+            _Readable.Position = 0;
+            return _Readable.Read();
         }
 
         public byte ReadByte()

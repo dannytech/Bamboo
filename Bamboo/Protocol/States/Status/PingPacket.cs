@@ -8,10 +8,8 @@
 
         public override void Parse(IReadable buffer)
         {
-            DataReader reader = new DataReader(buffer);
-
             // The payload for verification
-            long payload = reader.ReadInt64();
+            long payload = buffer.Reader.ReadInt64();
 
             _Client.ClientboundPackets.Add(new PongPacket(_Client, payload));
         }

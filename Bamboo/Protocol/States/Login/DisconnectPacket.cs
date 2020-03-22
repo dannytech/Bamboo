@@ -8,9 +8,7 @@
 
         public override void Write(IWritable buffer)
         {
-            DataWriter writer = new DataWriter(buffer);
-
-            writer.WriteVarChar("{\"text\":\"Not implemented. Playing the game will be added in future versions of Bamboo.\",\"bold\":\"true\"}");
+            buffer.Writer.WriteVarChar("{\"text\":\"Not implemented. Playing the game will be added in future versions of Bamboo.\",\"bold\":\"true\"}");
         }
     }
 }

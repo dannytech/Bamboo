@@ -12,11 +12,9 @@ namespace Bamboo.Protocol.States.Login
 
         public override void Write(IWritable buffer)
         {
-            DataWriter writer = new DataWriter(buffer);
-
             // Write the player metadata
-            writer.WriteVarChar(_Client.Player.UUID.ToString("D"));
-            writer.WriteVarChar(_Client.Player.Username);
+            buffer.Writer.WriteVarChar(_Client.Player.UUID.ToString("D"));
+            buffer.Writer.WriteVarChar(_Client.Player.Username);
 
             _Client.ClientState = ClientState.Play;
         }

@@ -10,9 +10,7 @@ namespace Bamboo.Protocol.States.Login
 
         public override void Write(IWritable buffer)
         {
-            DataWriter writer = new DataWriter(buffer);
-
-            writer.WriteVarInt(Settings.CompressionThreshold);
+            buffer.Writer.WriteVarInt(Settings.CompressionThreshold);
 
             _Client.Compression = CompressionState.Enabling;
         }

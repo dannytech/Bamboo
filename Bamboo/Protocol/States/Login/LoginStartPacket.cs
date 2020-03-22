@@ -12,9 +12,7 @@ namespace Bamboo.Protocol.States.Login
 
         public override void Parse(IReadable buffer)
         {
-            DataReader reader = new DataReader(buffer);
-
-            string username = reader.ReadVarChar();
+            string username = buffer.Reader.ReadVarChar();
 
             // TODO BambooHelpers.HttpClient.GetAsync($"https://api.mojang.com/users/profiles/minecraft/{username}");
             Guid uuid = Guid.NewGuid();

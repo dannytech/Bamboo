@@ -8,21 +8,26 @@
 
         public override void Parse(IReadable buffer)
         {
-            DataReader reader = new DataReader(buffer);
-
             // First, the protocol version
-            reader.ReadVarInt();
+            buffer.Reader.ReadVarInt();
 
             // Then, the hostname
-            reader.ReadVarChar();
+            buffer.Reader.ReadVarChar();
 
             // Then, the port
-            reader.ReadUInt16();
+            buffer.Reader.ReadUInt16();
 
             // Lastly, the type of request (status or login)
-            ClientState nextState = (ClientState)reader.ReadVarInt();
-
-            _Client.ClientState = nextState;
+            int nextState = buffer.Reader.ReadVarInt();
+            switch (nextState)
+            {
+                case 1:
+                    _Client.ClientState = ClientState.Status;
+                    break;
+                case 2:
+                    _Client.ClientState = ClientState.Login;
+                    break;
+            }
         }
     }
 }

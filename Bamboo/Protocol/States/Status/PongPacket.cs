@@ -12,9 +12,7 @@
 
         public override void Write(IWritable buffer)
         {
-            DataWriter writer = new DataWriter(buffer);
-
-            writer.WriteInt64(_Payload); // Payload
+            buffer.Writer.WriteInt64(_Payload); // Payload
         }
     }
 }
