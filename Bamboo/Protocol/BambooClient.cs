@@ -83,6 +83,7 @@ namespace Bamboo.Protocol
                             DeflateStream zlib = new DeflateStream(compressed, CompressionMode.Compress);
 
                             uncompressed.CopyTo(zlib); // Compress the bytes into the compressed stream
+                            zlib.Close();
 
                             bytes = compressed.ToArray();
                         }
@@ -159,6 +160,7 @@ namespace Bamboo.Protocol
                         DeflateStream zlib = new DeflateStream(uncompressed, CompressionMode.Decompress);
 
                         compressed.CopyTo(zlib);
+                        zlib.Close();
 
                         bytes = uncompressed.ToArray();
                     }
