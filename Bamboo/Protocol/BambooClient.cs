@@ -63,10 +63,11 @@ namespace Bamboo.Protocol
                     
                     // Prepend the packet size
                     writer.WriteVarInt(bytes.Length);
-                    buffer.Write(bytes);
+                    writer.Write(bytes);
 
                     // Send the bytes to the client
-                    Stream.Write(buffer.Buffer.ToArray());
+                    writer = new BambooWriter(Stream);
+                    writer.Write(buffer.Buffer.ToArray());
 
                     ClientboundPackets.RemoveAt(0);
                 }
@@ -91,7 +92,7 @@ namespace Bamboo.Protocol
                 }
 
                 // Read an entire packet
-                byte[] bytes = Stream.Read(packetLength);
+                byte[] bytes = reader.Read(packetLength);
 
                 // Build a buffer and reader
                 BambooBuffer readBuffer = new BambooBuffer(bytes);

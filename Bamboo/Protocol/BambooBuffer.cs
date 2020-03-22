@@ -34,15 +34,5 @@ namespace Bamboo.Protocol
             Cursor += bytes.Length;
             Length += bytes.Length;
         }
-
-        public byte ReadByte()
-        {
-            return Read(1)[0];
-        }
-
-        public void WriteByte(byte value)
-        {
-            Write(new byte[] { value });
-        }
     }
 }
