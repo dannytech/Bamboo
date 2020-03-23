@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.Json;
 
 namespace Bamboo.Protocol
 {
@@ -65,6 +66,12 @@ namespace Bamboo.Protocol
         {
             WriteVarInt(value.Length);
             Write(Encoding.UTF8.GetBytes(value));
+        }
+
+        public void WriteJSON(object value)
+        {
+            string json = JsonSerializer.Serialize(value);
+            WriteVarChar(json);
         }
 
         public void WriteUInt16(ushort value)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace Bamboo.Protocol
 {
@@ -107,6 +108,12 @@ namespace Bamboo.Protocol
 
             // Convert the bytes to a string
             return Encoding.Default.GetString(chars);
+        }
+
+        public object ReadJSON()
+        {
+            string json = ReadVarChar();
+            return JsonSerializer.Deserialize(json, typeof(object));
         }
 
         public ushort ReadUInt16()
