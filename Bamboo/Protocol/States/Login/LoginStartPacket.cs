@@ -1,5 +1,5 @@
 ﻿using Bamboo.Game;
-using Bamboo.Server;
+using Bamboo.Game.Chat;
 using System;
 
 namespace Bamboo.Protocol.States.Login
@@ -25,7 +25,6 @@ namespace Bamboo.Protocol.States.Login
             else
             {
                 _Client.ClientboundPackets.Add(new SetCompressionPacket(_Client));
-                _Client.ClientboundPackets.Add(new DisconnectPacket(_Client));
                 _Client.ClientboundPackets.Add(new LoginSuccessPacket(_Client));
             }
         }
