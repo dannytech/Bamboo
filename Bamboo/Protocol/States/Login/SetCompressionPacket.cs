@@ -1,6 +1,4 @@
-﻿using Bamboo.Server;
-
-namespace Bamboo.Protocol.States.Login
+﻿namespace Bamboo.Protocol.States.Login
 {
     class SetCompressionPacket : ClientboundPacket
     {

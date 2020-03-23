@@ -1,11 +1,11 @@
+using Bamboo.Game;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using Bamboo.Protocol;
 
-namespace Bamboo.Server
+namespace Bamboo.Protocol
 {
     class Server
     {
@@ -14,6 +14,30 @@ namespace Bamboo.Server
         private readonly ushort _ListenPort;
         private uint _CurrentID = 0;
         private readonly Dictionary<uint, Client> _Clients = new Dictionary<uint, Client>();
+
+        public Client[] Clients {
+            get
+            {
+                Client[] clients = new Client[_Clients.Count];
+                _Clients.Values.CopyTo(clients, 0);
+
+                return clients;
+            }
+        }
+
+        public Player[] Players
+        {
+            get
+            {
+                // Filter the clients to only those in the Play state
+                List<Client> clients = new List<Client>(Clients);
+                clients = clients.FindAll(client => client.ClientState == ClientState.Play);
+
+                // Convert the remaining clients into player objects
+                List<Player> players = clients.ConvertAll(client => client.Player);
+                return players.ToArray();
+            }
+        }
 
         public Server()
         {
@@ -72,7 +96,7 @@ namespace Bamboo.Server
                 TcpClient client = _Server.EndAcceptTcpClient(asyncResult);
 
                 // Handle the connection
-                _Clients.Add(_CurrentID++, new Client(client));
+                _Clients.Add(_CurrentID++, new Client(client, this));
 
                 // Look for the next connection
                 _Server.BeginAcceptTcpClient(ClientConnection, _Server);

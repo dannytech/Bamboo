@@ -1,7 +1,5 @@
 ﻿using Bamboo.Game;
-using Bamboo.Server;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -28,16 +26,18 @@ namespace Bamboo.Protocol
         private readonly TcpClient _Client;
         private readonly DataStream _Stream;
         public readonly List<ClientboundPacket> ClientboundPackets;
+        public readonly Server Server;
         public ClientState ClientState;
         public CompressionState Compression;
         public Player Player;
 
-        public Client(TcpClient client)
+        public Client(TcpClient client, Server server)
         {
             // Set up connection helpers
+            ClientboundPackets = new List<ClientboundPacket>();
+            Server = server;
             _Client = client;
             _Stream = new DataStream(_Client.GetStream());
-            ClientboundPackets = new List<ClientboundPacket>();
             
             // Set initial client state
             ClientState = ClientState.Handshaking;

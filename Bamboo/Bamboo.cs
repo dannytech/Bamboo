@@ -1,10 +1,10 @@
-﻿using Bamboo.Server;
+﻿using Bamboo.Protocol;
 
 namespace Bamboo
 {
     class Program
     {
-        private static Server.Server _Server;
+        private static Server _Server;
 
         public Program()
         {
@@ -15,7 +15,7 @@ namespace Bamboo
             Helpers.Initialize();
 
             // Start the server
-            _Server = new Server.Server();
+            _Server = new Server();
             _Server.Start();
 
             // TODO Start the API

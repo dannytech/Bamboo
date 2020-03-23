@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Bamboo.Protocol.States.Login
+﻿namespace Bamboo.Protocol.States.Login
 {
     class LoginSuccessPacket : ClientboundPacket
     {
