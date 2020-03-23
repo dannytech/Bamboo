@@ -77,14 +77,8 @@ namespace Bamboo.Protocol
 
                         if (uncompressedSize > Settings.CompressionThreshold)
                         {
-                            MemoryStream uncompressed = new MemoryStream(bytes);
-                            MemoryStream compressed = new MemoryStream();
-                            DeflateStream zlib = new DeflateStream(compressed, CompressionMode.Compress);
-
-                            uncompressed.CopyTo(zlib); // Compress the bytes into the compressed stream
-                            zlib.Close();
-
-                            bytes = compressed.ToArray();
+                            ZlibBuffer zlib = new ZlibBuffer(bytes, CompressionMode.Compress); // Compress the bytes into the compressed stream
+                            bytes = zlib.Reader.ReadAll();
                         }
                         else
                         {
@@ -149,14 +143,8 @@ namespace Bamboo.Protocol
                         byte[] compressedBytes = _Stream.Reader.Read(packetLength - dataLengthSize);
 
                         // Decompress the packet
-                        MemoryStream compressed = new MemoryStream(compressedBytes);
-                        MemoryStream uncompressed = new MemoryStream();
-                        DeflateStream zlib = new DeflateStream(uncompressed, CompressionMode.Decompress);
-
-                        compressed.CopyTo(zlib);
-                        zlib.Close();
-
-                        bytes = uncompressed.ToArray();
+                        ZlibBuffer zlib = new ZlibBuffer(compressedBytes, CompressionMode.Decompress);
+                        bytes = zlib.Reader.ReadAll();
                     }
                     else
                     {

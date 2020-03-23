@@ -67,6 +67,31 @@ namespace Bamboo.Protocol
             Write(Encoding.UTF8.GetBytes(value));
         }
 
+        public void WriteUInt16(ushort value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void WriteUInt32(uint value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void WriteUInt64(ulong value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void WriteInt16(short value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void WriteInt32(int value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
         public void WriteInt64(long value)
         {
             Write(BitConverter.GetBytes(value));
