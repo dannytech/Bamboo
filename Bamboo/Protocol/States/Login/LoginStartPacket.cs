@@ -1,6 +1,8 @@
 ﻿using Bamboo.Game;
-using Bamboo.Game.Chat;
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Bamboo.Protocol.States.Login
 {
@@ -10,12 +12,18 @@ namespace Bamboo.Protocol.States.Login
 
         public LoginStartPacket(Client client) : base(client) { }
 
-        public override void Parse(IReadable buffer)
+        public override async void Parse(IReadable buffer)
         {
             string username = buffer.Reader.ReadVarChar();
 
-            // TODO BambooHelpers.HttpClient.GetAsync($"https://api.mojang.com/users/profiles/minecraft/{username}");
-            Guid uuid = Guid.NewGuid();
+            // Query Mojang's API to get the player UUID
+            HttpResponseMessage response = await Helpers.HttpClient.GetAsync($"https://api.mojang.com/users/profiles/minecraft/{username}");
+            string body = await response.Content.ReadAsStringAsync();
+
+            // Parse the response JSON
+            Dictionary<string, string> reply = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
+            Guid uuid = new Guid(reply["id"]);
+
             _Client.Player = new Player(username, uuid);
 
             if (Settings.Configuration["online"] == "true")

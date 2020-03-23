@@ -113,7 +113,7 @@ namespace Bamboo.Protocol
         public object ReadJSON()
         {
             string json = ReadVarChar();
-            return JsonSerializer.Deserialize(json, typeof(object));
+            return JsonSerializer.Deserialize<object>(json);
         }
 
         public ushort ReadUInt16()
