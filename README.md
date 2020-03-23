@@ -1,2 +1,2 @@
 # Bamboo
-Efficient and extensible Minecraft server software written in C#
+Efficient Minecraft server software written in C#
