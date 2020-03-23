@@ -18,7 +18,7 @@ namespace Bamboo.Protocol.States.Status
             // Protocol metadata
             Dictionary<string, object> version = new Dictionary<string, object>
             {
-                { "name", Settings.ServerVersion },
+                { "name", $"{Settings.ServerName} {Settings.ServerVersion}" },
                 { "protocol", Settings.ProtocolVersion }
             };
             root.Add("version", version);
