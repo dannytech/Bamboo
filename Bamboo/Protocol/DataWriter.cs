@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
@@ -9,6 +10,11 @@ namespace Bamboo.Protocol
         public int Position { get; set; }
         public DataWriter Writer { get; }
         public void Write(byte[] bytes);
+    }
+
+    interface ISerializable
+    {
+        public Dictionary<string, object> ToSerializable();
     }
 
     class DataWriter
@@ -68,9 +74,10 @@ namespace Bamboo.Protocol
             Write(Encoding.UTF8.GetBytes(value));
         }
 
-        public void WriteJSON(object value)
+        public void WriteJson(object value)
         {
-            string json = JsonSerializer.Serialize(value);
+            string json = JsonSerializer.Serialize(value); // Convert to JSON representation
+
             WriteVarChar(json);
         }
 

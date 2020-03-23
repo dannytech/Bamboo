@@ -13,7 +13,7 @@ namespace Bamboo.Protocol.States.Login
 
         public override void Write(IWritable buffer)
         {
-            buffer.Writer.WriteJSON(_Reason.ToSerializable());
+            buffer.Writer.WriteJson(_Reason.ToSerializable());
         }
     }
 }

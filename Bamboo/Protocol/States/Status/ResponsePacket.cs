@@ -31,7 +31,6 @@ namespace Bamboo.Protocol.States.Status
             };
 
             List<Dictionary<string, string>> playerSample = new List<Dictionary<string, string>>();
-
             foreach (Player player in _Client.Server.Players)
             {
                 Dictionary<string, string> playerData = new Dictionary<string, string>
@@ -61,7 +60,7 @@ namespace Bamboo.Protocol.States.Status
                 root.Add("favicon", Settings.Icon);
             }
 
-            buffer.Writer.WriteJSON(root);
+            buffer.Writer.WriteJson(root);
         }
     }
 }

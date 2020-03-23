@@ -1,4 +1,7 @@
-﻿namespace Bamboo.Game.Chat
+﻿using Bamboo.Protocol;
+using System.Collections.Generic;
+
+namespace Bamboo.Game.Chat
 {
     class ChatComponentClickEventAction
     {
@@ -8,7 +11,7 @@
         public static string ChangePage { get; } = "change_page";
     }
 
-    class ChatComponentClickEvent
+    class ChatComponentClickEvent : ISerializable
     {
         public string Action { get; set; }
         public string Value { get; set; }
@@ -17,6 +20,17 @@
         {
             Action = action;
             Value = value;
+        }
+
+        public Dictionary<string, object> ToSerializable()
+        {
+            Dictionary<string, object> root = new Dictionary<string, object>
+            {
+                { "action", Action },
+                { "value", Value }
+            };
+
+            return root;
         }
     }
 }

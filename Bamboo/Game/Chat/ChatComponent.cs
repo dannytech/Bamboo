@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Bamboo.Protocol;
 
 namespace Bamboo.Game.Chat
 {
-    class ChatComponent
+    class ChatComponent : ISerializable
     {
         public int Style { get; set; }
         public string Color { get; set; }
@@ -50,23 +50,10 @@ namespace Bamboo.Game.Chat
 
             // Events
             if (ClickEvent != null)
-            {
-                Dictionary<string, object> clickEvent = new Dictionary<string, object>()
-                {
-                    { "action", ClickEvent.Action },
-                    { "value", ClickEvent.Value }
-                };
-                chatComponent.Add("clickEvent", clickEvent);
-            }
+                chatComponent.Add("clickEvent", ClickEvent.ToSerializable());
+
             if (HoverEvent != null)
-            {
-                Dictionary<string, object> hoverEvent = new Dictionary<string, object>()
-                {
-                    { "action", HoverEvent.Action },
-                    { "value", HoverEvent.Value }
-                };
-                chatComponent.Add("clickEvent", hoverEvent);
-            }
+                chatComponent.Add("hoverEvent", HoverEvent.ToSerializable());
 
             // Extend the component with more components
             if (Extra.Count > 0)

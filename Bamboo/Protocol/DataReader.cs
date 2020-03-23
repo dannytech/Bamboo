@@ -110,7 +110,7 @@ namespace Bamboo.Protocol
             return Encoding.Default.GetString(chars);
         }
 
-        public object ReadJSON()
+        public object ReadJson()
         {
             string json = ReadVarChar();
             return JsonSerializer.Deserialize<object>(json);

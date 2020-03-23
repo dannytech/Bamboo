@@ -1,4 +1,7 @@
-﻿namespace Bamboo.Game.Chat
+﻿using Bamboo.Protocol;
+using System.Collections.Generic;
+
+namespace Bamboo.Game.Chat
 {
     class ChatComponentHoverEventAction
     {
@@ -7,7 +10,7 @@
         public static string ShowEntity { get; } = "show_entity";
     }
 
-    class ChatComponentHoverEvent
+    class ChatComponentHoverEvent : ISerializable
     {
         public ChatComponentHoverEventAction Action { get; set; }
         public string Value { get; set; }
@@ -16,6 +19,17 @@
         {
             Action = action;
             Value = value;
+        }
+
+        public Dictionary<string, object> ToSerializable()
+        {
+            Dictionary<string, object> root = new Dictionary<string, object>
+            {
+                { "action", Action },
+                { "value", Value }
+            };
+
+            return root;
         }
     }
 }
