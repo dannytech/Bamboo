@@ -14,6 +14,7 @@ namespace Bamboo.Protocol
             get => (int)_Stream.Position;
             set => _Stream.Position = value;
         }
+        public int Available { get => Length - Position; }
         public DataReader Reader { get; }
         public DataWriter Writer { get; }
 
@@ -27,7 +28,7 @@ namespace Bamboo.Protocol
 
         public byte[] Read()
         {
-            return Read((int)(_Stream.Length - _Stream.Position));
+            return Read(Available);
         }
         public byte[] Read(int length)
         {

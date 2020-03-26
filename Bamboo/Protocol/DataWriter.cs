@@ -81,6 +81,12 @@ namespace Bamboo.Protocol
             WriteVarChar(json);
         }
 
+        public void WriteChar(char value)
+        {
+            // Read two bytes from the stream
+            Write(BitConverter.GetBytes(value));
+        }
+
         public void WriteUInt16(ushort value)
         {
             Write(BitConverter.GetBytes(value));

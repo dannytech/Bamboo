@@ -8,14 +8,15 @@ namespace Bamboo.Game.Chat
         public int Style { get; set; }
         public string Color { get; set; }
         public string Insertion { get; set; }
+        public bool Reset { get; set; } // Custom flag to trigger a styling reset
         public ChatComponentClickEvent ClickEvent { get; set; }
         public ChatComponentHoverEvent HoverEvent { get; set; }
         public List<ChatComponent> Extra { get; set; }
 
         public ChatComponent()
         {
-            Style = default;
-            Color = default;
+            Style = ChatComponentStyle.None;
+            Color = null;
             Insertion = default;
             ClickEvent = null;
             HoverEvent = null;
@@ -27,7 +28,15 @@ namespace Bamboo.Game.Chat
             Dictionary<string, object> chatComponent = new Dictionary<string, object>();
 
             // Determine which flags to add
-            if (Style != default)
+            if (Reset)
+            {
+                chatComponent.Add("bold", false);
+                chatComponent.Add("italic", false);
+                chatComponent.Add("underlined", false);
+                chatComponent.Add("strikethrough", false);
+                chatComponent.Add("obfuscated", false);
+            }
+            else if (Style != default)
             {
                 // Calculate which styles to apply based on the style flags
                 if ((Style & ChatComponentStyle.Bold) == ChatComponentStyle.Bold)

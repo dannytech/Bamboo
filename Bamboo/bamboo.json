@@ -7,5 +7,6 @@
     "ip": "127.0.0.1",
     "port": 25575
   },
-  "online": true
+  "online": true,
+  "motd": "&1&k------------&r &a&oBamboo Test Server &1&k------------&r\n&5Visit &4&ngithub.com/&cdannytech/Bamboo&5 to learn more!"
 }

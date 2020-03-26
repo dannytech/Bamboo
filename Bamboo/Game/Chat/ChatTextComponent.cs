@@ -6,6 +6,7 @@ namespace Bamboo.Game.Chat
     {
         public string Text { get; set; }
 
+        public ChatTextComponent() : this("") { }
         public ChatTextComponent(string text) : base()
         {
             Text = text;

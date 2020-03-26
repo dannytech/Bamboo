@@ -46,13 +46,13 @@ namespace Bamboo.Protocol.States.Status
             root.Add("players", capacity);
 
             // MOTD
-            ChatComponent motd = new ChatTextComponent("GitHub")
+            List<ChatTextComponent> components = ChatComponentFactory.FromString(Settings.Configuration["motd"]);
+            List<Dictionary<string, object>> motd = new List<Dictionary<string, object>>();
+            foreach(ChatTextComponent component in components)
             {
-                Style = ChatComponentStyle.Underlined | ChatComponentStyle.Italic | ChatComponentStyle.Bold,
-                Color = ChatComponentColor.BrightGreen,
-                ClickEvent = new ChatComponentClickEvent(ChatComponentClickEventAction.OpenURL, "https://github.com/dannytech/Bamboo")
-            };
-            root.Add("description", motd.ToSerializable());
+                motd.Add(component.ToSerializable());
+            }
+            root.Add("description", motd);
 
             // Favicon
             if (Settings.Icon != null)

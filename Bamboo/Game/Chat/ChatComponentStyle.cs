@@ -2,7 +2,7 @@
 {
     class ChatComponentStyle
     {
-        public static int None { get; } = 0b00000; // TODO Implement Reset inheritance
+        public static int None { get; } = 0b00000;
         public static int Bold { get; } = 0b00001;
         public static int Italic { get; } = 0b00010;
         public static int Underlined { get; } = 0b00100;

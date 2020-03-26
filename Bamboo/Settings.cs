@@ -16,6 +16,7 @@ namespace Bamboo
         // Instance settings
         public static IConfiguration Configuration;
         internal static string Icon = null;
+        public static char ChatFormattingPrefix = '&';
 
         internal static void LoadConfiguration()
         {

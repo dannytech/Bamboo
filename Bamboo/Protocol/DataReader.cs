@@ -10,6 +10,7 @@ namespace Bamboo.Protocol
         public DataReader Reader { get; }
         public int Length { get; }
         public int Position { get; set; }
+        public int Available { get; }
         public byte[] Read();
         public byte[] Read(int length);
     }
@@ -114,6 +115,12 @@ namespace Bamboo.Protocol
         {
             string json = ReadVarChar();
             return JsonSerializer.Deserialize<object>(json);
+        }
+
+        public char ReadChar()
+        {
+            // Read two bytes from the stream
+            return BitConverter.ToChar(Read(2));
         }
 
         public ushort ReadUInt16()
