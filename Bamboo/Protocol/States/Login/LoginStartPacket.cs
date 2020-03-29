@@ -24,16 +24,18 @@ namespace Bamboo.Protocol.States.Login
             Dictionary<string, string> reply = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
             Guid uuid = new Guid(reply["id"]);
 
+            Console.WriteLine($"Player logging in: {username} ({uuid})");
             _Client.Player = new Player(username, uuid);
 
             if (Settings.Configuration["online"] == "true")
             {
-                _Client.ClientboundPackets.Add(new EncryptionRequestPacket(_Client));
+                _Client.Queue(new EncryptionRequestPacket(_Client));
             }
             else
             {
-                _Client.ClientboundPackets.Add(new SetCompressionPacket(_Client));
-                _Client.ClientboundPackets.Add(new LoginSuccessPacket(_Client));
+                _Client.Queue(new SetCompressionPacket(_Client));
+                _Client.Queue(new LoginSuccessPacket(_Client));
+                _Client.Queue(new JoinGamePacket(_Client));
             }
         }
     }

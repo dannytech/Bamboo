@@ -25,20 +25,18 @@ namespace Bamboo.Protocol
     {
         private readonly TcpClient _Client;
         private readonly DataStream _Stream;
-        public readonly List<ClientboundPacket> ClientboundPackets;
-        public readonly Server Server;
+        private readonly Queue<ClientboundPacket> _ClientboundPackets;
         public ClientState ClientState;
         public CompressionState Compression;
         public Player Player;
 
-        public Client(TcpClient client, Server server)
+        public Client(TcpClient client)
         {
             // Set up connection helpers
-            ClientboundPackets = new List<ClientboundPacket>();
-            Server = server;
+            _ClientboundPackets = new Queue<ClientboundPacket>();
             _Client = client;
             _Stream = new DataStream(_Client.GetStream());
-            
+
             // Set initial client state
             ClientState = ClientState.Handshaking;
             Compression = CompressionState.Disabled;
@@ -52,17 +50,22 @@ namespace Bamboo.Protocol
             _Client.Close();
         }
 
+        public void Queue(ClientboundPacket packet)
+        {
+            _ClientboundPackets.Enqueue(packet);
+        }
+
         private void ClientboundTasks()
         {
             while (_Client.Connected)
             {
-                if (ClientboundPackets.Count > 0)
+                if (_ClientboundPackets.Count > 0)
                 {
                     // Build a temporary write buffer
                     DataBuffer buffer = new DataBuffer();
 
-                    // Grab the first packet
-                    ClientboundPacket packet = ClientboundPackets[0];
+                    // Pop the first packet
+                    ClientboundPacket packet = _ClientboundPackets.Dequeue();
 
                     buffer.Writer.WriteVarInt(packet.PacketID); // Write the packet ID
                     packet.Write(buffer); // Fill the temporary buffer with the response packet
@@ -104,8 +107,6 @@ namespace Bamboo.Protocol
                     bytes = buffer.Reader.ReadAll();
 
                     _Stream.Writer.Write(bytes);
-
-                    ClientboundPackets.RemoveAt(0); // Remove the packet from the queue
 
                     // Enable compression after sending the Set Compression packet
                     if (Compression == CompressionState.Enabling && packet is States.Login.SetCompressionPacket)
