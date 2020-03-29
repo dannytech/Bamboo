@@ -12,6 +12,8 @@ namespace Bamboo.Protocol.States.Status
 
         public override void Write(IWritable buffer)
         {
+            Server server = Server.Instance;
+
             // Generate an object to serialize into the response JSON
             Dictionary<string, object> root = new Dictionary<string, object>();
 
@@ -27,11 +29,11 @@ namespace Bamboo.Protocol.States.Status
             Dictionary<string, object> capacity = new Dictionary<string, object>
             {
                 { "max", 5 },
-                { "online", _Client.Server.Players.Length }
+                { "online", server.Clients.Players.Length }
             };
 
             List<Dictionary<string, string>> playerSample = new List<Dictionary<string, string>>();
-            foreach (Player player in _Client.Server.Players)
+            foreach (Player player in server.Clients.Players)
             {
                 Dictionary<string, string> playerData = new Dictionary<string, string>
                 {
