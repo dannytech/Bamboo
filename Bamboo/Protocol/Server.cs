@@ -9,42 +9,22 @@ namespace Bamboo.Protocol
 {
     class Server
     {
-        private readonly TcpListener _Server;
+        public static Server Instance;
+        public readonly ClientConnector Clients;
+        private readonly TcpListener _Listener;
         private readonly IPAddress _ListenIP;
         private readonly ushort _ListenPort;
-        private uint _CurrentID = 0;
-        private readonly Dictionary<uint, Client> _Clients = new Dictionary<uint, Client>();
-
-        public Client[] Clients {
-            get
-            {
-                Client[] clients = new Client[_Clients.Count];
-                _Clients.Values.CopyTo(clients, 0);
-
-                return clients;
-            }
-        }
-
-        public Player[] Players
-        {
-            get
-            {
-                // Filter the clients to only those in the Play state
-                List<Client> clients = new List<Client>(Clients);
-                clients = clients.FindAll(client => client.ClientState == ClientState.Play);
-
-                // Convert the remaining clients into player objects
-                List<Player> players = clients.ConvertAll(client => client.Player);
-                return players.ToArray();
-            }
-        }
 
         public Server()
         {
             _ListenIP = IPAddress.Parse(Settings.Configuration["server:ip"]);
             _ListenPort = ushort.Parse(Settings.Configuration["server:port"]);
 
-            _Server = new TcpListener(_ListenIP, _ListenPort);
+            _Listener = new TcpListener(_ListenIP, _ListenPort);
+            Clients = new ClientConnector(_Listener);
+
+            // Set up a static reference to this instance
+            Instance = this;
         }
 
         public void Start()
@@ -59,7 +39,7 @@ namespace Bamboo.Protocol
             RSAParameters parameters = serverKey.ExportParameters(true);
 
             // Start a TCP server
-            _Server.Start();
+            _Listener.Start();
 
             // Handle graceful shutdowns via Ctrl+C
             Console.CancelKeyPress += delegate
@@ -67,8 +47,8 @@ namespace Bamboo.Protocol
                 Stop();
             };
 
-            // Wait for incoming connections
-            _Server.BeginAcceptTcpClient(ClientConnection, _Server);
+            // Start listening for clients
+            _Listener.BeginAcceptTcpClient(Clients.Connect, _Listener);
 
             // We have to wait for input in order to keep the program running
             Console.Read(); // TODO Implement console
@@ -79,28 +59,10 @@ namespace Bamboo.Protocol
             Console.WriteLine("Shutting down gracefully...");
 
             // Disconnect all clients
-            foreach (KeyValuePair<uint, Client> client in _Clients)
-            {
-                client.Value.Stop();
-            }
+            Clients.Disconnect();
 
             // Stop listening
-            _Server.Stop();
-        }
-
-        private void ClientConnection(IAsyncResult asyncResult)
-        {
-            if (_Server.Server.IsBound)
-            {
-                // Retrieve the client connection
-                TcpClient client = _Server.EndAcceptTcpClient(asyncResult);
-
-                // Handle the connection
-                _Clients.Add(_CurrentID++, new Client(client, this));
-
-                // Look for the next connection
-                _Server.BeginAcceptTcpClient(ClientConnection, _Server);
-            }
+            _Listener.Stop();
         }
     }
 }
